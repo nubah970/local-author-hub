@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import QuizPage from "./pages/QuizPage";
+import Quiz from "./pages/Quiz";
 import ResultsPage from "./pages/ResultsPage";
 
 function App() {
@@ -14,7 +14,7 @@ function App() {
         <Route
           path="/"
           element={
-            <QuizPage
+            <Quiz
               quizAnswers={quizAnswers}
               setQuizAnswers={setQuizAnswers}
               setLoading={setLoading}
