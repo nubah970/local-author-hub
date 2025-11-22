@@ -1,24 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import QuizPage from "./pages/QuizPage";
+import ResultsPage from "./pages/ResultsPage";
 
 function App() {
+  const [quizAnswers, setQuizAnswers] = useState({});
+  const [resultData, setResultData] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <QuizPage
+              quizAnswers={quizAnswers}
+              setQuizAnswers={setQuizAnswers}
+              setLoading={setLoading}
+              loading={loading}
+              setResultData={setResultData}
+            />
+          }
+        />
+        <Route
+          path="/results"
+          element={<ResultsPage resultData={resultData} loading={loading} />}
+        />
+      </Routes>
+    </Router>
   );
 }
 
