@@ -1,0 +1,59 @@
+/* ============================
+   BOOKSTORE THEME — GLOBAL
+   Warm neutrals, paper textures
+   ============================ */
+
+   body {
+    margin: 0;
+    background: #f8f3ed; /* warm book-page beige */
+    font-family: "Inter", serif;
+  }
+  
+  /* Center the page content with a nice bookstore layout */
+  .page-wrapper {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  
+  /* Titles */
+  .bookstore-title {
+    font-family: "Georgia", serif;
+    font-weight: 700;
+    color: #5a4636;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  
+  /* Subtle card styling */
+  .bookstore-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 28px;
+    border: 2px solid #e8dccb;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  
+  /* Buttons — uniform size & vibe */
+  .bookstore-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: 2px solid #d4b799;
+    background: #f3e9df;
+    color: #5a4636;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  
+  .bookstore-btn:hover {
+    background: #e8dccb;
+  }
+  
+  .bookstore-btn.selected {
+    background: #d4b799;
+    color: white;
+    border-color: #b89575;
+  }
+  

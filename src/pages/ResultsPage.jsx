@@ -7,25 +7,19 @@ export default function RecommendationsPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Gemini results are passed via navigate state
   const recommendationsText = location.state?.data || "No recommendations available.";
 
-  // Parse recommendations - handle multiple formats
   const parseRecommendations = (text) => {
-    // Check if it's an error message
     if (text.startsWith("Error fetching recommendations")) {
       return [];
     }
 
-    // Split by "---" separator first (our preferred format)
     let sections = text.split(/---+/).filter(s => s.trim().length > 0);
     
-    // If no "---" found, try splitting by numbered lists
     if (sections.length <= 1) {
       sections = text.split(/\d+\.\s+/).filter(s => s.trim().length > 0);
     }
 
-    // If still no sections, try splitting by double newlines
     if (sections.length <= 1) {
       sections = text.split(/\n\n+/).filter(s => s.trim().length > 0);
     }
@@ -33,7 +27,6 @@ export default function RecommendationsPage() {
     return sections.map((section) => {
       const lines = section.trim().split('\n').map(l => l.trim()).filter(l => l);
       
-      // Extract book title and author (look for "**Title** by Author" or "Title by Author")
       let title = "";
       let author = "";
       let location = "";
@@ -41,7 +34,6 @@ export default function RecommendationsPage() {
       let whyItFits = "";
 
       lines.forEach((line, idx) => {
-        // Extract title and author from first line
         if (idx === 0) {
           const titleMatch = line.match(/\*\*(.+?)\*\*\s+by\s+(.+)/i) || line.match(/(.+?)\s+by\s+(.+)/i);
           if (titleMatch) {
@@ -52,23 +44,19 @@ export default function RecommendationsPage() {
           }
         }
         
-        // Extract location
         if (line.toLowerCase().startsWith('location:')) {
           location = line.replace(/^location:\s*/i, '').trim();
         }
         
-        // Extract description
         if (line.toLowerCase().startsWith('description:')) {
           description = line.replace(/^description:\s*/i, '').trim();
         }
         
-        // Extract why it fits
         if (line.toLowerCase().startsWith('why it fits:') || line.toLowerCase().startsWith('why it fits')) {
           whyItFits = line.replace(/^why it fits:?\s*/i, '').trim();
         }
       });
 
-      // If we didn't find structured fields, use the whole section as description
       if (!description && !whyItFits && lines.length > 1) {
         description = lines.slice(1).join(' ');
       }
