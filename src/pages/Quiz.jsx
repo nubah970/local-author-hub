@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { ArrowRight, Sparkles, Book, Smile, Clock, Tag } from "lucide-react";
 import Spinner from "../components/Spinner";
+import { fetchTorontoAuthors } from "../gemini";
+
 
 export default function Quiz({ onSubmit, isLoading }) {
   const [step, setStep] = useState(1);
@@ -9,6 +11,7 @@ export default function Quiz({ onSubmit, isLoading }) {
     mood: "",
     length: "",
     themes: [],
+    support: [],
   });
 
   const handleSelect = (key, value) => {
@@ -22,6 +25,15 @@ export default function Quiz({ onSubmit, isLoading }) {
         ? prev.themes.filter((t) => t !== theme)
         : [...prev.themes, theme];
       return { ...prev, themes };
+    });
+  };
+
+  const toggleSupport = (supportOption) => {
+    setPreferences((prev) => {
+      const support = prev.support.includes(supportOption)
+        ? prev.support.filter((s) => s !== supportOption)
+        : [...prev.support, supportOption];
+      return { ...prev, support };
     });
   };
 
@@ -118,13 +130,13 @@ export default function Quiz({ onSubmit, isLoading }) {
       <div className="mb-8">
         <div className="flex justify-between text-xs font-medium text-gray-500 mb-2">
           <span>Start</span>
-          <span>Step {step} of 4</span>
+          <span>Step {step} of {steps.length}</span>
           <span>Finish</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2.5">
           <div
             className="bg-blue-500 h-2.5 rounded-full transition-all duration-300 ease-in-out"
-            style={{ width: `${(step / 4) * 100}%` }}
+            style={{ width: `${(step / steps.length) * 100}%` }}
           ></div>
         </div>
       </div>
@@ -141,7 +153,11 @@ export default function Quiz({ onSubmit, isLoading }) {
               key={option}
               onClick={() => {
                 if (currentStepData.multi) {
-                  toggleTheme(option);
+                  if (step === 4) {
+                    toggleTheme(option);
+                  } else if (step === 5) {
+                    toggleSupport(option);
+                  }
                 } else {
                   const key =
                     step === 1 ? "genre" : step === 2 ? "mood" : "length";
@@ -149,14 +165,20 @@ export default function Quiz({ onSubmit, isLoading }) {
                 }
               }}
               className={`p-4 rounded-xl text-left border-2 transition-all duration-200 flex items-center justify-between group ${
-                currentStepData.multi && preferences.themes.includes(option)
+                currentStepData.multi && (
+                  (step === 4 && preferences.themes.includes(option)) ||
+                  (step === 5 && preferences.support.includes(option))
+                )
                   ? "border-blue-500 bg-blue-50 text-blue-800"
                   : "border-gray-100 hover:border-blue-300 hover:bg-gray-50 text-gray-700"
               }`}
             >
               <span className="font-medium">{option}</span>
-              {currentStepData.multi && preferences.themes.includes(option) && (
-                <Sparkles className="w-4 h-4 text-blue-500" />
+              {currentStepData.multi && (
+                ((step === 4 && preferences.themes.includes(option)) ||
+                 (step === 5 && preferences.support.includes(option))) && (
+                  <Sparkles className="w-4 h-4 text-blue-500" />
+                )
               )}
             </button>
           ))}
@@ -172,12 +194,27 @@ export default function Quiz({ onSubmit, isLoading }) {
             </button>
           )}
 
-          {currentStepData.multi && (
+          {currentStepData.multi && step === 4 && (
             <button
-              onClick={submitQuiz}
+              onClick={() => setStep(step + 1)}
               disabled={preferences.themes.length === 0}
               className={`flex items-center px-8 py-3 rounded-full font-bold text-white transition-all transform hover:scale-105 ${
                 preferences.themes.length === 0
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-600 shadow-lg"
+              }`}
+            >
+              Next
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </button>
+          )}
+
+          {currentStepData.multi && step === 5 && (
+            <button
+              onClick={submitQuiz}
+              disabled={preferences.support.length === 0}
+              className={`flex items-center px-8 py-3 rounded-full font-bold text-white transition-all transform hover:scale-105 ${
+                preferences.support.length === 0
                   ? "bg-gray-300 cursor-not-allowed"
                   : "bg-blue-500 hover:bg-blue-600 shadow-lg"
               }`}
